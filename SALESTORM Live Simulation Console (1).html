@@ -1,0 +1,195 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SALESTORM Live Simulation Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef1f7;--p:#fff;--p2:#f5f7fc;--ink:#141b30;--mut:#66739a;--line:#d8deec;--a:#0b86c4;--g:#0f9d6a;--y:#c98600;--r:#d23f55;--v:#6d4fe0;--cell:#e1e6f2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b16;--p:#0c1326;--p2:#101a35;--ink:#e6ebf8;--mut:#7f8db3;--line:#1d2848;--a:#38bdf8;--g:#34d399;--y:#fbbf24;--r:#f87171;--v:#a78bfa;--cell:#18234a}}
+:root[data-theme="dark"]{--bg:#070b16;--p:#0c1326;--p2:#101a35;--ink:#e6ebf8;--mut:#7f8db3;--line:#1d2848;--a:#38bdf8;--g:#34d399;--y:#fbbf24;--r:#f87171;--v:#a78bfa;--cell:#18234a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.mono,time,code,b.n{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+.app{max-width:1320px;margin:0 auto;padding:16px 18px 40px}
+.top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brand h1{margin:0;font:700 22px/1 Inter;letter-spacing:.14em}.brand h1 span{color:var(--a)}.brand p{margin:3px 0 0;font-size:12.5px;color:var(--mut)}
+.live{display:inline-flex;align-items:center;gap:7px;font:600 11px "JetBrains Mono",monospace;letter-spacing:.06em;margin-top:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g);display:inline-block;flex:none}.live .dot{animation:pl 1.6s infinite}.dot.y{background:var(--y)}.dot.r{background:var(--r);animation:pl 1s infinite}.dot.m{background:var(--mut)}
+@keyframes pl{0%{box-shadow:0 0 0 0 color-mix(in srgb,currentColor 50%,transparent)}70%,100%{box-shadow:0 0 0 7px transparent}}
+.live{color:var(--g)}.live.y{color:var(--y)}.live.m{color:var(--mut)}
+.hr{display:flex;flex-wrap:wrap;gap:18px;align-items:center}.kv small{display:block;color:var(--mut);font-size:10.5px;letter-spacing:.05em}.kv b{font:600 16px "JetBrains Mono",monospace}
+button,select{font:500 12px Inter,sans-serif;color:var(--ink);background:var(--p2);border:1px solid var(--line);border-radius:7px;padding:7px 12px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+button:hover{border-color:var(--a)}button:active{transform:scale(.97)}button.go{background:var(--a);border-color:var(--a);color:#03121c;font-weight:600}
+h2{margin:26px 0 10px;font:600 11.5px Inter;letter-spacing:.09em;color:var(--mut);display:flex;gap:10px;align-items:center}h2:after{content:"";flex:1;height:1px;background:var(--line)}
+.ov{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}@media(max-width:900px){.ov{grid-template-columns:repeat(2,1fr)}}
+.mc{background:var(--p);border:1px solid var(--line);border-radius:10px;padding:11px 13px;transition:transform .15s,border-color .15s}.mc:hover{transform:translateY(-2px);border-color:var(--a)}
+.mc small{color:var(--mut);font-size:10.5px;letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center}
+.mc b.n{display:block;font-size:24px;font-weight:600;margin:3px 0 0;font-variant-numeric:tabular-nums}.mc em{font-style:normal;color:var(--mut);font-size:11.5px}
+.mc input{width:100%;margin:7px 0 0;accent-color:var(--a);height:14px}
+.pipe{background:var(--p);border:1px solid var(--line);border-radius:12px;overflow-x:auto}.pipe>div{min-width:940px;padding:8px}
+canvas{display:block;width:100%}#cv{height:310px}.demo #cv{height:480px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11.5px;color:var(--mut);padding:2px 10px 8px}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.chaos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}@media(max-width:760px){.chaos{grid-template-columns:1fr}}
+.cc{text-align:left;padding:10px 13px;border-color:color-mix(in srgb,var(--r) 35%,var(--line));display:flex;flex-direction:column;gap:2px}.cc b{font-size:13px}.cc span{color:var(--mut);font-size:11.5px}.cc.on{background:color-mix(in srgb,var(--r) 14%,var(--p2));border-color:var(--r)}.cc.on span{color:var(--r)}
+.strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;font-size:11.5px;align-items:center}.strip span{padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--mut);transition:all .3s}.strip span.d{color:var(--ink);border-color:var(--g)}.strip span.a{color:var(--ink);border-color:var(--y);background:color-mix(in srgb,var(--y) 14%,transparent)}
+.g2{display:grid;grid-template-columns:7fr 5fr;gap:18px}.g3{display:grid;grid-template-columns:5fr 7fr;gap:18px}@media(max-width:940px){.g2,.g3{grid-template-columns:1fr}}
+.panel{background:var(--p);border:1px solid var(--line);border-radius:12px;padding:14px}
+#bar{display:flex;height:16px;border-radius:5px;overflow:hidden;background:var(--cell);margin:2px 0 10px}#bar i{display:block;height:100%;transition:width .35s}
+.lg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}.lg div{font-size:11px;color:var(--mut)}.lg b{display:block;font:600 17px "JetBrains Mono",monospace;color:var(--ink)}.lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+#mx{display:grid;gap:4px}#mx div{aspect-ratio:1;border-radius:3px;background:var(--cell);transition:background .3s,transform .3s}
+#mx .R{background:var(--y)}#mx .P{background:var(--a);transform:scale(.84)}#mx .C{background:var(--v)}#mx .S{background:var(--g)}#mx .S:nth-child(4n+2){filter:brightness(.84)}#mx .S:nth-child(4n+3){filter:brightness(1.12)}#mx .R:nth-child(3n+1){filter:brightness(.9)}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}@media(max-width:560px){.kp{grid-template-columns:repeat(2,1fr)}}
+.kp div{background:var(--p2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}.kp small{display:block;color:var(--mut);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kp b{font:600 18px "JetBrains Mono",monospace}.kp u{text-decoration:none;font:10px "JetBrains Mono",monospace;color:var(--mut);margin-left:5px}
+.hl{display:grid;gap:0;margin-top:10px}.hl div{display:grid;grid-template-columns:118px 1fr 96px;gap:8px;align-items:center;font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)}.hl small{font:10.5px "JetBrains Mono",monospace;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hl span{font:600 10px "JetBrains Mono",monospace;display:flex;gap:6px;align-items:center;justify-content:flex-end}.hl span.y{color:var(--y)}.hl span.r{color:var(--r)}.hl span:not(.y):not(.r){color:var(--g)}.hl .dot{animation:none}
+.charts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}@media(max-width:900px){.charts{grid-template-columns:repeat(2,1fr)}}.charts div{background:var(--p);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.charts small{color:var(--mut);font-size:10.5px;display:flex;justify-content:space-between}.charts canvas{height:54px;margin-top:4px}
+.iv{display:flex;flex-direction:column;gap:8px}.iv div{display:grid;grid-template-columns:22px 1fr;gap:4px 8px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--p2);transition:all .3s}
+.iv svg{width:18px;height:18px}.iv b{font-size:11.5px;letter-spacing:.05em}.iv p{margin:1px 0 0;color:var(--mut);font:11.5px "JetBrains Mono",monospace;grid-column:2}.iv .ok{border-color:color-mix(in srgb,var(--g) 40%,var(--line))}.iv .ok svg{color:var(--g)}.iv .bad{border-color:var(--r);background:color-mix(in srgb,var(--r) 14%,var(--p2))}.iv .bad svg,.iv .bad b{color:var(--r)}
+.fl{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.fl button{padding:4px 9px;font-size:11px}.fl button.on{border-color:var(--a);color:var(--a)}
+#log{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto}#log li{display:grid;grid-template-columns:96px 150px 66px 1fr;gap:2px 10px;padding:5px 4px;border-bottom:1px solid var(--line);font-size:11.5px;cursor:pointer;align-items:baseline}#log li:hover{background:var(--p2)}#log li.new{animation:ni .4s}@keyframes ni{from{opacity:0;transform:translateY(-6px)}}
+#log time,#log code{color:var(--mut);font-size:10.5px}#log em{font:600 10.5px "JetBrains Mono",monospace;font-style:normal}#log p{margin:0;grid-column:2/5;color:var(--ink)}
+.g{color:var(--g)}.y{color:var(--y)}.r{color:var(--r)}.v{color:var(--v)}.b{color:var(--a)}
+#tr{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;font-size:12px}#tr .st{display:flex;justify-content:space-between;padding:2px 0;font-family:"JetBrains Mono",monospace;font-size:11.5px}
+#verdict{border-radius:12px;padding:18px;border:1px solid var(--line);background:var(--p)}#verdict.pass{border-color:var(--g);background:color-mix(in srgb,var(--g) 9%,var(--p))}#verdict.fail{border-color:var(--r)}
+#verdict h3{margin:0 0 10px;font:700 24px Inter;letter-spacing:.04em}#verdict.pass h3{color:var(--g)}.vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.vg div{font-size:11.5px;color:var(--mut)}.vg b{display:block;font:600 20px "JetBrains Mono",monospace;color:var(--ink)}
+.demo .opt{display:none!important}.demo .ov input{display:none}
+</style></head><body><div class="app">
+<div class="top"><div class="brand"><h1>SALES<span>TORM</span></h1><p>Live Simulation Console</p><p>High-scale flash sale · concurrency · inventory consistency · payment reliability</p><div class="live m" id="live"><i class="dot m"></i><span id="lt">READY</span></div></div>
+<div class="hr"><div class="kv"><small>SIMULATION TIME</small><b id="clk">t+0.0s</b></div><div class="kv"><small>SPEED</small><b><select id="sp"><option value="2">2×</option><option value="4" selected>4×</option><option value="10">10×</option></select></b></div><div class="kv"><small>SYSTEM HEALTH</small><b id="sh" class="g">HEALTHY</b></div>
+<div style="display:flex;gap:6px"><button class="go" id="go">Start the sale</button><button id="rs">Reset</button><button id="dm" title="Projector-friendly view">Presentation</button><button id="th">Theme</button></div></div></div>
+
+<h2>SIMULATION OVERVIEW</h2><div class="ov" id="ov"></div>
+
+<h2>REQUEST PIPELINE</h2><div class="pipe"><div><canvas id="cv"></canvas></div>
+<div class="legend"><span><i style="background:var(--g)"></i>success / payment ok</span><span><i style="background:var(--y)"></i>waiting</span><span><i style="background:var(--v)"></i>duplicate / async event</span><span><i style="background:var(--r)"></i>rejected / payment failed</span></div></div>
+<div class="chaos"><button class="cc" id="c1"><b>Order Service</b><span id="cs1">30s outage · ready</span></button><button class="cc" id="c2"><b>Payment Gateway</b><span id="cs2">10s outage · ready</span></button><button class="cc" id="c3"><b>Redis</b><span id="cs3">primary failover · ready</span></button></div>
+<div class="strip" id="strip"></div>
+
+<h2>INVENTORY AND SERVICES</h2><div class="g2"><div class="panel"><div id="bar"></div><div class="lg" id="lg"></div><div id="mx"></div><div id="shd" class="mono" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--mut)"></div></div>
+<div><div class="panel"><div class="kp" id="kp"></div></div><div class="panel opt" style="margin-top:12px"><div style="font-weight:600;font-size:12px">System health</div><div class="hl" id="hl"></div></div></div></div>
+
+<div class="opt"><h2>REAL-TIME METRICS · LAST 30s</h2><div class="charts" id="ch"></div></div>
+
+<h2>CORRECTNESS AND TELEMETRY</h2><div class="g3"><div class="iv" id="iv"></div>
+<div class="panel opt"><div class="fl" id="fl"></div><ul id="log"></ul><div id="tr"><span style="color:var(--mut)">Click any event with a trace id to open its trace.</span></div></div></div>
+
+<h2>SIMULATION VERDICT</h2><div id="verdict"><h3>Awaiting simulation</h3><div style="color:var(--mut)">Press Start the sale. The verdict appears once every request, payment and order has settled.</div></div>
+</div>
+<script>
+const $=i=>document.getElementById(i),rnd=(a,b)=>a+Math.random()*(b-a),TTL=5,nf=v=>Math.round(v).toLocaleString(),hex=()=>Math.random().toString(16).slice(2,8);
+const NUM=new Map();function num(id,v){let o=NUM.get(id);if(!o){const el=$(id);if(!el)return;o={el,c:0,t:0};NUM.set(id,o)}o.t=v}
+function tw(){for(const o of NUM.values())if(o.c!==o.t){o.c+=(o.t-o.c)*.25;if(Math.abs(o.t-o.c)<.5)o.c=o.t;o.el.textContent=nf(o.c)}}
+const OV=[['u','CUSTOMERS','Concurrent requests','',500,10000,500,10000],['s','STOCK','Limited inventory','',20,100,10,100],['r','ADMISSION RATE','Waiting-room release, req/s','',500,5000,250,2000],['p','PAYMENT SUCCESS','Gateway approval rate','%',70,100,1,95],['d','DUPLICATE RATE','Repeat clicks, same key','%',0,10,1,2]];
+$('ov').innerHTML=OV.map(o=>`<div class="mc"><small>${o[1]}<i class="dot m" id="ind_${o[0]}"></i></small><b class="n"><span id="n_${o[0]}">0</span>${o[3]}</b><em>${o[2]}</em><input type="range" id="${o[0]}" min="${o[4]}" max="${o[5]}" step="${o[6]}" value="${o[7]}"></div>`).join('');
+const KP=[['seen','Requests received',0],['q','Waiting-room queue',1],['won','Units reserved',0],['so','Sold out / waitlisted',0],['dup','Duplicates absorbed',0],['paid','Payments captured',0],['failed','Payments failed',1],['promo','Waitlist promotions',1],['exp','Reservations expired',1],['orders','Orders created',0],['ob','Outbox backlog',0],['ret','Order retries',1]];
+$('kp').innerHTML=KP.map(k=>`<div class="${k[2]?'opt':''}"><small>${k[1]}</small><b id="k_${k[0]}">0</b><u id="t_${k[0]}"></u></div>`).join('');
+const ST=[['S','Sold','--g'],['C','Confirmed','--v'],['P','Pending','--a'],['R','Reserved','--y'],['A','Available','--cell']];
+$('bar').innerHTML=ST.map(s=>`<i id="sg_${s[0]}" style="background:var(${s[2]})"></i>`).join('');
+$('lg').innerHTML=ST.map(s=>`<div><i style="background:var(${s[2]})"></i>${s[1]}<b id="lc_${s[0]}">0</b></div>`).join('');
+const HS=['API Gateway','Waiting Room','Inventory Gate','Redis','Payment Provider','Kafka / Outbox','Order Service','Database'];
+$('hl').innerHTML=HS.map((h,i)=>`<div><b>${h}</b><small id="m${i}"></small><span id="h${i}"></span></div>`).join('');
+const CH=[['arr','Request rate','/s','--a'],['won','Reservations','/s','--y'],['pay','Payment success','%','--g'],['q','Queue depth','','--v'],['ord','Order rate','/s','--g']];
+$('ch').innerHTML=CH.map(c=>`<div><small>${c[1]}<b id="cv_${c[0]}" class="mono">0</b></small><canvas id="cc_${c[0]}"></canvas></div>`).join('');
+const FL=['all','success','failure','payment','inventory','order','system'];
+$('fl').innerHTML=FL.map(f=>`<button data-f="${f}" class="${f==='all'?'on':''}">${f.toUpperCase()}</button>`).join('');
+$('fl').onclick=e=>{const f=e.target.dataset.f;if(!f)return;S.filter=f;[...$('fl').children].forEach(b=>b.classList.toggle('on',b.dataset.f===f));S.dirty=1;S.seenId=1e9};
+const CK={o:['Order Service down','Outbox keeps accepting','Kafka backlog grows','Payment stays healthy','Service recovers','Backlog drains','Orders caught up'],p:['Gateway fails','Circuit breaker opens','Reservations held, timers paused','Gateway recovers','Charges resume'],r:['Redis primary lost','Gate pauses admission','Rebuild from ledger and stream','Admission resumes']};
+let S,P=[],hl={};
+const fmt=w=>{const d=new Date(w);return d.toTimeString().slice(0,8)+'.'+String(d.getMilliseconds()).padStart(3,'0')};
+function ev(type,user,tid,msg,cats,cls){S.ev.unshift({id:++S.eid,w:S.wall0+S.t*1000,type,user,tid,msg,cats,cls});if(S.ev.length>300)S.ev.pop();S.dirty=1}
+function init(){const n=+$('s').value;S={t:0,run:false,paused:false,done:false,total:n,cells:Array(n).fill('A'),U:+$('u').value,arr:0,acc:0,adm:0,q:[],idem:new Set,wset:new Set,wait:[],res:[],outbox:[],ordSet:new Set,tr:new Map,seen:0,won:0,so:0,dup:0,paid:0,failed:0,promo:0,exp:0,orders:0,sold:0,charges:0,ret:0,oU:0,pU:0,rU:0,fl:{},zero:false,rt:0,ev:[],eid:0,seenId:0,filter:'all',dirty:1,wall0:Date.now(),ck:null,ctr:{arr:0,adm:0,won:0,chg:0,pub:0,ord:0,dup:0,so:0,fail:0},prev:{},rate:{arr:0,adm:0,won:0,chg:0,pub:0,ord:0,dup:0,so:0,fail:0},rc:0,sc:0,hist:{arr:[],won:[],pay:[],q:[],ord:[]},tp:0,tprev:{}};
+P=[];hl={};S.own=Array(n).fill(null);for(let i=0;i<60;i++)amb((60-i)*.5);NUM.forEach(o=>{o.c=o.t});$('mx').style.gridTemplateColumns=`repeat(${n>60?20:10},1fr)`;$('mx').innerHTML='<div></div>'.repeat(n);
+$('verdict').className='';$('verdict').innerHTML='<h3>Awaiting simulation</h3><div style="color:var(--mut)">Press Start the sale. The verdict appears once every request, payment and order has settled.</div>';
+$('go').textContent='Start the sale';ev('SALE_ARMED','system',0,n+' units armed, '+S.U.toLocaleString()+' customers waiting',['system'],'b')}
+function spawn(path,col,rate=1){if(Math.random()<rate&&P.length<500)P.push({path,seg:0,p:0,col,fall:0,j:rnd(-12,12)})}
+function release(r,why){r.st='X';if(r.tid&&S.tr.has(r.tid))S.tr.get(r.tid).st='released';S.cells[r.i]='A';spawn([4,10],'r',.6);
+ if(S.wait.length){const u=S.wait.shift();S.idem.add(u);const tid=hex();S.res.push(mk(u,r.i,tid));S.cells[r.i]='R';S.promo++;ev('WAITLIST_PROMOTED','user_'+u,tid,why+': unit #'+(r.i+1)+' handed to next waiter',['inventory','success'],'y')}else ev('RESERVATION_RELEASED','user_'+r.u,r.tid,why+': unit #'+(r.i+1)+' back in stock',['inventory'],'y')}
+function mk(u,i,tid){const lat={gw:rnd(6,18),adm:rnd(2,8),inv:rnd(4,12),pay:rnd(50,110),ord:rnd(3,10)};S.tr.set(tid,{u,lat,st:'reserved',t0:S.t,i});S.own[i]={u,tid};return{u,i,st:'R',tid,at:Math.random()<.03?1e9:S.t+rnd(.5,1.5),exp:S.t+TTL}}
+function handle(u){S.ctr.adm++;
+ if(S.idem.has(u)||S.wset.has(u)){S.dup++;S.ctr.dup++;spawn([0,1,2,3,8],'v',.25);if(S.dup%150===1)ev('DUPLICATE_ABSORBED','user_'+u,0,'Replayed from idempotency store, no second reservation',['inventory'],'v');return}
+ const i=S.cells.indexOf('A');
+ if(i<0){S.so++;S.ctr.so++;S.wset.add(u);S.wait.push(u);spawn([0,1,2,3,9],'r',.05);if(!S.zero){S.zero=true;ev('SOLD_OUT','gate',0,'Inventory exhausted. Edge flag pushed to CDN, losers waitlisted',['inventory','failure'],'r')}else if(S.so%1500===0)ev('SOLD_OUT','gate',0,S.so.toLocaleString()+' requests turned away so far',['inventory','failure'],'r');return}
+ const tid=hex();S.cells[i]='R';S.idem.add(u);S.won++;S.ctr.won++;S.res.push(mk(u,i,tid));spawn([0,1,2,3,4],'g',1);
+ ev('RESERVATION_CREATED','user_'+u,tid,'Unit #'+(i+1)+' reserved (TTL '+TTL+'s)',['inventory','success'],'y');
+ if(S.won===S.total)ev('LAST_UNIT','user_'+u,tid,'Last unit reserved. Exactly '+S.total+' winners possible',['inventory'],'g')}
+function step(h){S.t+=h;
+ if(S.run&&S.arr<S.U){S.acc+=S.U/3*h;let k=Math.floor(S.acc);S.acc-=k;while(k--&&S.arr<S.U){const u=S.arr++;S.q.push(u);S.seen++;S.ctr.arr++;if(Math.random()<.004)spawn([0,1,2],'y',1);if(Math.random()*100<+$('d').value){S.q.push(u);S.seen++;S.ctr.arr++}}}
+ const rdown=S.t<S.rU,psp=S.t<S.pU,ord=S.t<S.oU,pp=+$('p').value;
+ for(const k of['r','p','o'])if(S.fl[k]&&S.t>=S[k+'U']){S.fl[k]=0;ev('SERVICE_RECOVERED','system',0,{r:'Gate rebuilt from ledger, admission resumes',p:'Payment gateway recovered, held reservations charge again',o:'Order Service recovered, draining outbox'}[k],['system','success'],'g')}
+ if(!rdown){const R=+$('r').value;S.adm=Math.min(S.adm+R*h,R*.2);let n=Math.floor(S.adm);S.adm-=n;n=Math.min(n,S.q.length);while(n--)handle(S.q.shift())}
+ for(const r of S.res){
+  if(r.st==='R'){if(S.t>=r.at){r.st='P';r.rt=S.t+.3;S.cells[r.i]='P'}else if(S.t>r.exp){S.exp++;ev('RESERVATION_EXPIRED','user_'+r.u,r.tid,'Abandoned cart, TTL elapsed',['inventory','failure'],'r');release(r,'Expiry sweeper')}}
+  else if(r.st==='P'&&S.t>=r.rt){if(psp)r.rt=S.t+.5;else{S.charges++;S.ctr.chg++;if(Math.random()*100<pp){r.st='C';S.cells[r.i]='C';S.paid++;S.ctr.pub++;S.outbox.push(r);const t=S.tr.get(r.tid);if(t)t.st='paid';spawn([4,5],'g',.6);ev('PAYMENT_SUCCEEDED','user_'+r.u,r.tid,'₹999 captured, event written to outbox',['payment','success'],'g')}else{S.failed++;S.ctr.fail++;ev('PAYMENT_FAILED','user_'+r.u,r.tid,'Card declined, reservation released',['payment','failure'],'r');release(r,'Reservation released')}}}}
+ S.res=S.res.filter(r=>r.st!=='X'&&r.st!=='S');
+ if(!ord){let n=Math.min(S.outbox.length,Math.ceil(400*h));while(n--){const r=S.outbox.shift();if(!S.ordSet.has(r.tid)){S.ordSet.add(r.tid);S.orders++;S.sold++;S.ctr.ord++}S.cells[r.i]='S';r.st='S';const t=S.tr.get(r.tid);if(t)t.st='ordered';spawn([5,6,7],'v',.5);ev('ORDER_CREATED','user_'+r.u,r.tid,'Order #ORD-'+(8000+S.orders)+' created',['order','success'],'g')}}
+ else if(S.outbox.length&&(S.rt+=h)>=.5){S.rt=0;S.ret++}
+ if((S.rc+=h)>=.25){const d=S.rc;S.rc=0;for(const k in S.ctr){S.rate[k]=S.rate[k]*.5+.5*(S.ctr[k]-(S.prev[k]||0))/d;S.prev[k]=S.ctr[k]}}
+ if((S.sc+=h)>=.5){S.sc=0;const H=S.hist;H.arr.push(S.rate.arr);H.won.push(S.rate.won);H.pay.push(S.paid+S.failed?S.paid/(S.paid+S.failed)*100:0);H.q.push(S.q.length);H.ord.push(S.rate.ord);for(const k in H)if(H[k].length>60)H[k].shift()}
+ if((S.tp+=h)>=1){S.tp=0;for(const[k]of KP){S.tprev[k]=S['_'+k]===undefined?0:S['_'+k];S['_'+k]=k==='q'?S.q.length:k==='ob'?S.outbox.length:S[k]}}}
+const hv=(k,v)=>`<span class="${k}">${v}</span>`;
+function health(){const T=performance.now()/1000,z=(k,a)=>Math.sin(T*1.3+k*2.1)*a+Math.sin(T*3.1+k)*a*.5,R=S.rate,lf=Math.min(1,R.arr/3500),ql=S.q.length,rd=S.t<S.rU,ps=S.t<S.pU,od=S.t<S.oU,full=!S.cells.includes('A'),bl=S.outbox.length,cpu=22+lf*62+z(1,3);
+ return[
+ [cpu>80?'y':'',cpu>80?'HIGH LOAD':'HEALTHY',`p99 ${nf(12+lf*38+z(2,2))}ms · cpu ${nf(cpu)}% · ${nf(8+lf*40)} pods`],
+ [rd?'r':ql>200?'y':'',rd?'PAUSED':ql>200?'QUEUEING':'HEALTHY',`queue ${nf(ql)} · ${(R.adm/1000).toFixed(1)}k tickets/s`],
+ [full?'y':'',full?'SOLD OUT':'HEALTHY',`lua ${(.18+lf*.3+z(3,.03)).toFixed(2)}ms · 4 shards`],
+ [rd?'r':'',rd?'FAILOVER':'HEALTHY',`${(R.adm/1000*1.6+.4+z(4,.1)).toFixed(1)}k ops/s · lag ${nf(1+lf*3+z(5,.5))}ms`],
+ [ps?'r':'',ps?'DEGRADED':'HEALTHY',`p99 ${ps?'timeout':nf(80+lf*40+z(6,6))+'ms'} · err ${ps?'100':(.2+lf*.5).toFixed(1)}%`],
+ [od&&bl?'y':'',od&&bl?'BUFFERING':'HEALTHY',`lag ${nf(bl)} · ${nf(R.pub)} msg/s`],
+ [od?'r':'',od?'DEGRADED':'HEALTHY',od?'unreachable · 0 pods':`p99 ${nf(18+lf*14+z(7,2))}ms · 12 pods`],
+ [lf>.85?'y':'',lf>.85?'HIGH LOAD':'HEALTHY',`conns ${nf(60+lf*110+z(8,4))}/200 · repl lag ${nf(2+lf*6+z(9,1))}ms`]]}
+function amb(o=0){const T=performance.now()/1000-o,a=750+Math.sin(T/3)*140+Math.sin(T*1.7)*50,d=22+Math.sin(T/2)*5,R=S.rate,H=S.hist;R.arr=a;R.adm=a*.97;R.chg=d*1.04;R.pub=d;R.ord=d;R.won=0;R.dup=0;R.so=0;R.fail=0;H.arr.push(a);H.won.push(0);H.pay.push(99.1+Math.sin(T)*.4);H.q.push(0);H.ord.push(d);for(const k in H)if(H[k].length>60)H[k].shift()}
+function ui(){
+ const cnt=c=>S.cells.filter(x=>x===c).length,held=S.cells.length-cnt('A'),tot=S.total;
+ KP.forEach(([k])=>{const v=k==='q'?S.q.length:k==='ob'?S.outbox.length:S[k];num('k_'+k,v);const d=v-(S.tprev[k]||0);const t=$('t_'+k);if(t)t.textContent=S.run&&d?(d>0?'↑ ':'↓ ')+Math.abs(d)+'/s':''});
+ [['u',S.U],['s',S.total],['r',+$('r').value],['p',+$('p').value],['d',+$('d').value]].forEach(([k,v])=>{num('n_'+k,v);const i=$('ind_'+k);i.className='dot '+(S.run&&!S.paused?'':'m')});
+ ST.forEach(([c])=>{const n=cnt(c);num('lc_'+c,n);$('sg_'+c).style.width=n/tot*100+'%'});
+ const cs=$('mx').children;S.cells.forEach((c,i)=>{const w=c==='A'?'':c;if(cs[i].className!==w){cs[i].className=w;const o=S.own[i];cs[i].title='Unit #'+(i+1)+' · '+({A:'available',R:'reserved',P:'payment pending',C:'confirmed',S:'sold'}[c])+(o&&c!=='A'?' · user_'+o.u+' · trace:'+o.tid:'')}});$('shd').textContent=[0,1,2,3].map(k=>'shard-'+k+': '+S.cells.filter((c,i)=>i%4===k&&c==='A').length+' left').join('   ');
+ $('clk').textContent='t+'+S.t.toFixed(1)+'s';
+ const hs=health();hs.forEach((h,i)=>{$('m'+i).textContent=h[2];const e=$('h'+i),t=`<i class="dot ${h[0]}"></i>${h[1]}`;if(e.dataset.v!==t){e.dataset.v=t;e.innerHTML=t;e.className=h[0]}});
+ const bad=hs.some(h=>h[0]==='r'),deg=hs.some(h=>h[0]==='y'||h[0]==='r');$('sh').textContent=bad?'DEGRADED':deg?'ELEVATED LOAD':'HEALTHY';$('sh').className=bad?'r':deg?'y':'g';
+ const lv=S.done?['m','COMPLETED']:S.paused?['y','PAUSED']:S.run?['','LIVE SIMULATION']:['m','READY'];$('live').className='live '+lv[0];$('live').querySelector('i').className='dot '+(lv[0]||'');$('lt').textContent=lv[1];
+ [['c1','oU','cs1','30s outage'],['c2','pU','cs2','10s outage'],['c3','rU','cs3','primary failover']].forEach(([b,k,s,l])=>{const on=S.t<S[k]&&S.run;$(b).classList.toggle('on',on);$(s).textContent=l+' · '+(on?'ACTIVE '+Math.ceil(S[k]-S.t)+'s left':'ready')});
+ const settled=S.done||(S.run&&S.arr>=S.U&&!S.q.length&&!S.res.some(r=>r.st==='R'||r.st==='P')&&!S.outbox.length&&S.t>S.rU&&S.t>S.oU&&S.t>S.pU);
+ const dupC=S.charges-(S.paid+S.failed),dupO=S.orders-S.ordSet.size,neg=tot-held<0;
+ const I=[[held<=tot&&S.sold<=tot,'INVENTORY SAFETY',`${held} held + ${tot-held} available = ${held+tot-held} / ${tot} units accounted for`],[dupC===0,'PAYMENT IDEMPOTENCY',`${S.charges} charges · ${S.paid} successful · ${dupC} duplicate charges`],[S.orders<=S.paid,'NO ORDER WITHOUT PAYMENT',`${S.paid} payments · ${S.orders} orders`],[dupO===0&&(!settled||S.orders===S.paid),'ONE ORDER PER PAYMENT',settled?`${S.paid} payments → ${S.orders} orders, ${dupO} duplicates`:`${S.orders} of ${S.paid} paid orders converged (outbox draining)`],[!neg,'INVENTORY NEVER NEGATIVE',`available = ${tot-held} (floor 0)`]];
+ const sig=JSON.stringify(I);if(S.isig!==sig){S.isig=sig;$('iv').innerHTML=I.map(a=>`<div class="${a[0]?'ok':'bad'}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="${a[0]?'M4 10.5l4 4 8-9':'M5 5l10 10M15 5L5 15'}"/></svg><b>${a[1]}${a[0]?'':' · INVARIANT VIOLATION'}</b><p>${a[2]}</p></div>`).join('')}
+ if(S.run&&settled&&!S.done){S.done=true;S.run=false;const ok=I.every(a=>a[0]);$('verdict').className=ok?'pass':'fail';
+  $('verdict').innerHTML=`<h3>${ok?'✓ ALL INVARIANTS HOLD · SIMULATION PASSED':'SIMULATION FAILED'}</h3><div class="vg"><div><b>${S.sold} / ${tot}</b>units sold</div><div><b>${Math.max(0,S.sold-tot)}</b>oversells</div><div><b>${dupC}</b>duplicate charges</div><div><b>${S.orders}</b>orders created</div><div><b>${S.dup.toLocaleString()}</b>duplicate requests absorbed</div><div><b>${S.exp}</b>reservations expired</div><div><b>${S.promo}</b>waitlist promotions</div><div><b>${S.ret}</b>order retries in outage</div></div>`;
+  ev('SALE_SETTLED','system',0,S.sold+'/'+tot+' sold, zero oversell',['system','success'],ok?'g':'r')}
+ const ck=S.ck,st=ck?CK[ck]:null;if(st){const down=S.t<S[ck+'U'];let ix=ck==='o'?(down?(S.outbox.length?3:1):(S.outbox.length?5:6)):ck==='p'?(down?2:4):(down?2:3);const sg=ck+ix;if(S.ssig!==sg){S.ssig=sg;$('strip').innerHTML=st.map((s,i)=>`<span class="${i<ix?'d':i===ix?'a':''}">${s}</span>${i<st.length-1?'→':''}`).join('')}}
+ if(S.dirty){S.dirty=0;const f=S.filter,L=S.ev.filter(e=>f==='all'||e.cats.includes(f)).slice(0,60),sid=S.seenId>1e8?0:S.seenId;
+  $('log').innerHTML=L.map(e=>`<li data-t="${e.tid||''}" class="${e.id>sid?'new':''}"><time>${fmt(e.w)}</time><em class="${e.cls}">${e.type}</em><span class="mono">${e.user||''}</span><code>${e.tid?'trace:'+e.tid:''}</code><p>${e.msg}</p></li>`).join('');S.seenId=S.eid}}
+$('log').onclick=e=>{const l=e.target.closest('li');if(!l||!l.dataset.t)return;const t=S.tr.get(l.dataset.t);if(!t)return;const L=t.lat,ok=t.st==='paid'||t.st==='ordered',od=t.st==='ordered';
+ const R=[['User',0,'✓'],['API Gateway',L.gw,'✓'],['Waiting Room',L.adm,'✓'],['Inventory Gate',L.inv,'✓'],['Payment',ok?L.pay:0,ok?'✓':t.st==='released'?'✗ released':'…'],['Outbox',ok?2:0,ok?'✓':'…'],['Order',od?L.ord:0,od?'✓':'…']];const tot=R.reduce((a,r)=>a+r[1],0);
+ $('tr').innerHTML=`<b>TRACE ${l.dataset.t}</b> <span class="mono" style="color:var(--mut)">user_${t.u} · unit #${t.i+1} · ${t.st}</span>`+R.map(r=>`<div class="st"><span>${r[0]}</span><span>${r[1]?r[1].toFixed(0)+'ms':''} ${r[2]}</span></div>`).join('')+`<div class="st" style="border-top:1px solid var(--line)"><b>Total</b><b>${tot.toFixed(0)}ms</b></div>`};
+const cv=$('cv'),cx=cv.getContext('2d');let W=0,H=0;
+function fit(){const d=devicePixelRatio||1;[cv,...CH.map(c=>$('cc_'+c[0]))].forEach(c=>{c.width=c.clientWidth*d;c.height=c.clientHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0)});W=cv.clientWidth;H=cv.clientHeight}addEventListener('resize',fit);fit();
+const NM=['CUSTOMERS','EDGE / WAF','WAITING ROOM','ATOMIC GATE','PAYMENT','OUTBOX / KAFKA','ORDER','FULFILMENT','IDEMPOTENCY CACHE','SOLD OUT / WAITLIST','RESERVATION RELEASE'];
+const ED=[[0,1,'arr'],[1,2,'arr'],[2,3,'adm'],[3,4,'won'],[4,5,'pub'],[5,6,'ord'],[6,7,'ord'],[3,8,'dup'],[3,9,'so'],[4,10,'fail']];
+function pos(){const w=W/8,y1=H*.3,y2=H*.8,o=[];for(let i=0;i<8;i++)o.push({x:w*(i+.5),y:y1,w:Math.min(w-16,142),h:86});o.push({x:w*3.5,y:y2,w:Math.min(w*1.5,170),h:50},{x:w*4.5,y:y2,w:Math.min(w*1.5,170),h:50},{x:w*5.5,y:y2,w:Math.min(w*1.5,170),h:50});return o}
+function nstat(i){const R=S.rate,f=n=>nf(n)+' req/s',rd=S.t<S.rU,A=S.cells.filter(c=>c==='A').length;
+ return[[S.run&&S.arr<S.U?['ACTIVE','--g']:['BROWSING','--a'],f(R.arr),nf(S.arr)+' sent'],[['HEALTHY','--g'],f(R.arr),'cache · bot shield'],[rd?['PAUSED','--r']:S.q.length>200?['QUEUEING','--y']:['HEALTHY','--g'],f(R.adm),'queue '+nf(S.q.length)],[rd?['REBUILDING','--r']:A?['HEALTHY','--g']:['SOLD OUT','--y'],A+' units left','Lua + DB CHECK'],[S.t<S.pU?['BREAKER OPEN','--r']:['HEALTHY','--g'],f(R.chg),nf(S.paid)+' ok · '+nf(S.failed)+' failed'],[S.t<S.oU&&S.outbox.length?['BUFFERING','--y']:['HEALTHY','--g'],'backlog '+nf(S.outbox.length),f(R.pub)],[S.t<S.oU?['DEGRADED','--r']:['HEALTHY','--g'],f(R.ord),nf(S.orders)+' orders'],[['HEALTHY','--g'],nf(S.orders)+' shipments','async consumer'],[['ACTIVE','--v'],nf(S.dup)+' hits','replay, no 2nd charge'],[['ACTIVE','--y'],nf(S.wait.length)+' waiting','FIFO standby'],[['ACTIVE','--r'],nf(S.failed+S.exp)+' released','back to stock']][i]}
+function draw(rdt){cx.clearRect(0,0,W,H);const k=getComputedStyle(document.documentElement),C=n=>k.getPropertyValue(n).trim(),N=pos(),line=C('--line');
+ for(const[a,b,key]of ED){const A=N[a],B=N[b],r=S.rate[key]||0;cx.strokeStyle=line;cx.lineWidth=2;cx.beginPath();cx.moveTo(A.x,A.y);cx.lineTo(B.x,B.y);cx.stroke();if(r>1){cx.globalAlpha=Math.min(.85,.2+r/300);cx.strokeStyle=C(b===9||b===10?'--r':b===8||b===5?'--v':'--a');cx.lineWidth=2+Math.min(3,Math.log10(1+r));cx.stroke();cx.globalAlpha=1}}
+ N.forEach((n,i)=>{const[s,m1,m2]=nstat(i),col=C(s[1]),h=hl[i]||0,x=n.x-n.w/2,y=n.y-n.h/2;cx.fillStyle=C('--p');cx.strokeStyle=h>0?C('--a'):(s[0]==='HEALTHY'||s[0]==='BROWSING'||i>7?line:col);cx.lineWidth=1.5+h*1.5;cx.shadowColor=C('--a');cx.shadowBlur=h*14;cx.beginPath();cx.roundRect(x,y,n.w,n.h,10);cx.fill();cx.stroke();cx.shadowBlur=0;hl[i]=Math.max(0,h-rdt*2.5);
+  cx.textAlign='left';cx.fillStyle=C('--ink');cx.font='600 10.5px Inter,sans-serif';cx.fillText(NM[i],x+10,y+18);
+  if(i<8){cx.fillStyle=col;cx.beginPath();cx.arc(x+14,y+34,3.5,0,7);cx.fill();cx.font='600 10px JetBrains Mono,monospace';cx.fillText(s[0],x+23,y+37);cx.fillStyle=C('--ink');cx.font='500 12px JetBrains Mono,monospace';cx.fillText(m1,x+10,y+56);cx.fillStyle=C('--mut');cx.font='10.5px Inter,sans-serif';cx.fillText(m2,x+10,y+74)}
+  else{cx.fillStyle=col;cx.font='600 11px JetBrains Mono,monospace';cx.fillText(m1,x+10,y+36)}});
+ for(const p of P){p.p+=rdt*3.4;if(p.p>=1){p.p=0;p.seg++;hl[p.path[p.seg]]=1}if(p.seg>=p.path.length-1){p.dead=1;continue}
+  const A=N[p.path[p.seg]],B=N[p.path[p.seg+1]],t=p.p<.5?2*p.p*p.p:1-Math.pow(-2*p.p+2,2)/2,x=A.x+(B.x-A.x)*t,y=A.y+(B.y-A.y)*t+(A.y===B.y?p.j*Math.sin(t*Math.PI):0);cx.fillStyle=C('--'+p.col);cx.shadowColor=C('--'+p.col);cx.shadowBlur=6;cx.beginPath();cx.arc(x,y,3,0,7);cx.fill()}
+ cx.shadowBlur=0;P=P.filter(p=>!p.dead);
+ CH.forEach(([id,,u,col])=>{const c=$('cc_'+id),g=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,d=S.hist[id],mx=Math.max(id==='pay'?100:1,...d)*1.15;g.clearRect(0,0,w,h);if(d.length>1){g.beginPath();d.forEach((v,i)=>{const x=i/59*w,y=h-v/mx*(h-4)-2;i?g.lineTo(x,y):g.moveTo(x,y)});g.strokeStyle=C(col);g.lineWidth=1.6;g.lineJoin='round';g.stroke();g.lineTo((d.length-1)/59*w,h);g.lineTo(0,h);g.globalAlpha=.12;g.fillStyle=C(col);g.fill();g.globalAlpha=1}$('cv_'+id).textContent=nf(d[d.length-1]||0)+u})}
+let last=performance.now();
+function frame(now){const rdt=Math.min((now-last)/1000,.05);last=now;
+ if(S.run&&!S.paused){const sp=+$('sp').value;let rem=rdt*sp;while(rem>0){const h=Math.min(rem,.02);step(h);rem-=h}}
+ if(!S.run&&!S.paused){S.amb=(S.amb||0)+rdt;if(S.amb>=.5){S.amb=0;amb()}if(Math.random()<.08)spawn([0,1],'a',1)}
+ ui();tw();draw(rdt);requestAnimationFrame(frame)}
+function chaos(k,dur,msg){if(!S.run)return;S[k+'U']=S.t+dur;S.fl[k]=1;S.ck=k;S.ssig='';ev('CHAOS_EVENT','system',0,msg+' · duration '+dur+'s',['system','failure'],'r')}
+$('go').onclick=()=>{if(S.done)init();if(!S.run){S.run=true;S.paused=false;$('go').textContent='Pause';ev('SALE_OPENED','system',0,'Buy-now storm begins',['system'],'b')}else{S.paused=!S.paused;$('go').textContent=S.paused?'Resume':'Pause'}};
+$('rs').onclick=init;
+$('c1').onclick=()=>chaos('o',30,'Order Service unavailable. Paid orders buffer in the outbox');
+$('c2').onclick=()=>chaos('p',10,'Payment gateway failing. Circuit breaker open, reservations held');
+$('c3').onclick=()=>chaos('r',2,'Redis primary lost. Gate pauses, rebuilds stock from ledger and stream');
+$('dm').onclick=()=>{document.body.classList.toggle('demo');setTimeout(fit,30)};
+$('th').onclick=()=>{const d=document.documentElement;d.dataset.theme=(d.dataset.theme==='light'||(!d.dataset.theme&&!matchMedia('(prefers-color-scheme:dark)').matches))?'dark':'light'};
+$('u').oninput=$('s').oninput=()=>{if(!S.run)init()};
+init();requestAnimationFrame(frame);
+</script></body></html>
